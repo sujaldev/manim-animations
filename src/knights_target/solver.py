@@ -1,6 +1,5 @@
 from manim import (
     Square,
-    Triangle,
     Text,
     Dot,
     Line,
@@ -135,6 +134,28 @@ class Cell(Square):
         self.paint_lines(buffer)
         self.paint_text(buffer)
 
+    def paint_backwards(self, scene: Scene):
+        current_cell = self
+        # group = VGroup()
+        scene.play(Write(VGroup(
+            Dot(fill_color=self.DOT_COLOR, radius=0.2).next_to(current_cell, ORIGIN),
+            self.gen_text(self.count)
+        )))
+        while current_cell.count != 0:
+            prev_cell: Cell = current_cell.prev
+            group = VGroup(
+                Dot(fill_color=self.DOT_COLOR, radius=0.2).next_to(prev_cell, ORIGIN),
+                self.gen_text(prev_cell.count, prev_cell),
+                Line(
+                    start=current_cell.get_center(),
+                    end=prev_cell.get_center(),
+                    color=self.LINE_COLOR,
+                    stroke_width=self.LINE_WIDTH
+                )
+            )
+            current_cell = prev_cell
+            scene.play(Write(group))
+
 
 class Knight:
     ALLOWED_MOVES = [
@@ -229,6 +250,9 @@ class Knight:
                 tree += animation
 
         self.scene.play(Unwrite(tree))
+
+    def paint_solution(self):
+        self.board.cells[self.board.target].paint_backwards(self.scene)
 
     def paint(self):
         self.paint_knight()

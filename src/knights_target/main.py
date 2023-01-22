@@ -18,7 +18,7 @@ class Main(Scene):
         text = Text("Hello, world!")
         self.add(bg)
         self.play(Write(text))
-        self.wait(24)
+        self.wait(10)
         self.play(Unwrite(text))
         self.play(FadeOut(bg))
 
@@ -26,7 +26,14 @@ class Main(Scene):
         board = Board(self, params.obstacles, params.target)
         knight = Knight(params.knight, board)
         board.paint()
-        knight.paint()
+        self.wait(15)
+        knight.paint_knight()
+        self.wait(10)
+        knight.paint_tree()
+        self.wait(5)
+        knight.remove_tree()
+        self.wait(5)
+        knight.paint_solution()
         self.wait(10)
 
 
